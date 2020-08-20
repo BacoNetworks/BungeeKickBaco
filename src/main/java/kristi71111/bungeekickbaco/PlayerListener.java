@@ -40,8 +40,13 @@ public class PlayerListener implements Listener {
                 }
             }
         }
-        if(Checker.isReachable(kickedFrom.getAddress())){
-           return;
+        if (kickedFrom != null && Checker.isReachable(kickedFrom.getAddress())) {
+            if(ev.getKickReason() == null){
+                return;
+            }
+            if (!ev.getKickReason().toLowerCase().contains("afk")) {
+                return;
+            }
         }
 
         ServerInfo kickTo = this.plugin.getProxy().getServerInfo(BungeeKickBaco.config.getString("ServerName"));
@@ -61,7 +66,8 @@ public class PlayerListener implements Listener {
         }
     }
 }
-class Checker{
+
+class Checker {
     public static boolean isReachable(InetSocketAddress address) {
         int pingTimeout = 1000;
         Socket socket = new Socket();
@@ -69,7 +75,7 @@ class Checker{
             socket.connect(address, pingTimeout);
             socket.close();
             return true;
-        } catch(IOException ignored) {
+        } catch (IOException ignored) {
         }
         return false;
     }
